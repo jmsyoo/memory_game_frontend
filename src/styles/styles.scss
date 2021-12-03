@@ -29,17 +29,92 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    .container{
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
   .Login{
     width: 100%;
     font-size: 2rem;
     height: 100px;
     input{
-      height: 3rem;
+      height: 3.5rem;
+      font-size: 1.5rem;
     }
     button{
       font-size: 1.5rem;
       margin-right: 1rem;
       margin-top: 1.2rem;
+    }
+  }
+  .Game{
+    background-color: var(--white);
+    width: 100%;
+    height: 100%;
+    // padding: 1rem;
+    .Game__Top{
+      //background-color: lightblue;
+      height: 10%;
+      margin: auto;
+      .Game__Top__Col{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        padding: 10px;
+        border: "1px solid black";
+      }
+    }
+    .Game__Body{
+      //background-color: lightgrey;
+      height:80%;
+      margin: auto;
+      .Game__Body__Col{
+        height: 100%;
+        width: 100%;
+        padding: 1rem;
+        //background-color: lightpink;
+        .Game__Body__Col__InnerDiv{
+          background-color: var(--lightgrey);
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .Game__Body_Col__InnerDiv__CardDiv{
+            width:100%;
+            height:100%;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+          }
+        }
+      }
+    }
+    .Game__Bottom{
+      //background-color: lightgreen;
+      height: 10%;
+      margin: auto;
+      .Game__Bottom__Col{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        padding: 10px;
+        border: "1px solid grey";
+        ul{
+          height: 100%;
+          list-style-type: none;
+          overflow-y: scroll;
+          li{
+            font-size: 1.3rem;
+          }
+        }
+      }
     }
   }
