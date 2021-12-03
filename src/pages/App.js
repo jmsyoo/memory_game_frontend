@@ -12,14 +12,13 @@ const URL = {
 }
 
 function App() {
-  const [ userId, setUserId ] = useLocalStorage('id')
+  const [ userId, setUserId ] = useLocalStorage('id') // 
 
   const game = (
     <PlayProvider URL={URL} userId={userId}>
       <Game setUserId={setUserId} userId={userId}/>
     </PlayProvider>
   )
-
 
   // Testing user id state
   useEffect(() => {

@@ -48,29 +48,12 @@ class card {
 export function PlayProvider({ URL, userId, children }){
 
     const getUesrId = useMemo(() => { // Check when a user id is changed. To reduce number of rendering.
-        return userId
+        return userId.split('%%')
     },[userId])
-    const USER_COLUMN_KEY = ['score','cards'] // To filter colums from fetched user data.
-
-    // to show record for returned users.
-    useEffect(() => {
-        (async() => {
-            const response = await axios.get(`${URL.production}users/${getUesrId}`).then((result) => {
-                if(!result.data) return
-                
-                const tempObj = {}
-                for(let key in result.data){
-                    if(USER_COLUMN_KEY.includes(key)){ // Check if column keys avilable
-                        tempObj[key] = result.data[key] // add to obj if it does
-                    }
-                }
-                setUerRecords(tempObj) // assign filtered user data obj to user records state
-            })
-        })() // IFFE functino to fetch user's record from server when user id is updated.
-    },[getUesrId])
+    const USER_COLUMN_KEY = ['id','score','cards'] // To filter colums from fetched user data.
 
     // 1. User Records
-    const [userRecord, setUerRecords] = useState({})
+    const [userRecord, setUserRecords] = useState({})
     // 2. Card Deck
     const [state, setState] = useState({
         isGameStarted: false,
@@ -81,11 +64,54 @@ export function PlayProvider({ URL, userId, children }){
     const [openCards, setOpenCards] = useState([])
     // 4. matched cards array state
     const [matchedCards, setMatchedCards] = useState([])
+    // 5. Lock card flip during evaluation.
+    const [isEvaluating, setIsEvaluating] = useState(false)
+
+
+    /// Requesting API ///
+    // to show record for returned users.
+    useEffect(() => {
+        (async() => {
+            const response = await axios.get(`${URL.production}users/${getUesrId[0]}`).then((result) => {
+                console.log(result.data)
+                if(!result.data) return
+                
+                const tempObj = {}
+                for(let key in result.data){
+                    if(USER_COLUMN_KEY.includes(key)){ // Check if column keys avilable
+                        tempObj[key] = result.data[key] // add to obj if it does
+                    }
+                }
+                setUserRecords(tempObj) // assign filtered user data obj to user records state
+            })
+        })() // IFFE function to fetch user's record from server when user id is updated.
+    },[getUesrId])
+    const saveMatchingCardToDb = async (value) => {
+        try{
+            const response = await axios.post(`${URL.production}cards`,{
+                ...value
+            }).then((result) => {
+                console.log('posting matching card result: ',result.data)
+                // Update record state
+                setUserRecords((prv) => {
+                    return{
+                        ...prv,
+                        score: userRecord.score + result.data.score,
+                        cards: userRecord.cards + 1
+                    }
+                })
+            })
+        }catch(error){
+            console.error(error)
+        }
+    }
+    /// Requesting API ///
+
+    
 
     // Make card function
     const makeCards = (cb) => {
         let counter = 0
-
         const cardArray = [...Array(6).keys()].reduce((acc, item, index) => {
             const cardObj = new card(counter, item) // Create new card instance
             counter ++
@@ -121,7 +147,6 @@ export function PlayProvider({ URL, userId, children }){
     // Card flip function
     const handleCardFlip = (event, value, score) => {
         const cardId = event.target.id // unique card Id
-
         if(!cardId) return // check if card id is available.
 
         const flipped = true
@@ -141,13 +166,22 @@ export function PlayProvider({ URL, userId, children }){
         setOpenCards([...openCards, tempObj]) // store opened card value to OpenCards array state
     }
     // Check if opened cards have matching value
-    const checkCardsMatching = () => {
-
+    const checkCardsMatching = (id, cb) => {
         const [firstCard, secondCard] = openCards
-
-        if(firstCard.value === secondCard.value){ // if opened two cards' values are same
+        setIsEvaluating(true) // set evaluating to true so user can't flip the third card during the evaluation.
+        if(firstCard.value === secondCard.value){ // if opened two cards' values are same add them to matched card array state.
+            
+            // Send data to db
+            const value = {
+                itemvalue: firstCard.value,
+                flipped: 1, // true
+                score: firstCard.score,
+                user_id: id
+            }
+            saveMatchingCardToDb(value) // Saving data to db.
+            cb() // callback for preventing card flipping during the evaluation.
             return setMatchedCards(matchedCards.concat(openCards))  // concat them and store it matched state. 
-        }else{ // otherwise find cards list with matching values and set their isFlipped back to false
+        }else{ // otherwise find cards list with opened cards' matching values and set their isFlipped values back to false.
             const data = state.cards.map((item) => {
                 if(item.value == firstCard.value || item.value == secondCard.value){
                     return {...item, isFlipped: false}
@@ -162,14 +196,16 @@ export function PlayProvider({ URL, userId, children }){
                         life: state.life -10
                     }
                 })                
-            }, 500) // Save new data after one second.
+            }, 500) 
+            // Save new data after one second.
+
+            cb()// callback for preventing card flipping during the evaluation
             return () => setTimeout(timer)
         }
     }
-
     // Check if user have every matched cards in matched array.
     const CheckComplete = () => {
-        return matchedCards.length === state.cards.length / 2 && alert('You won.')
+        return matchedCards.length === 2 && alert('You won.')
     }
     //  Reset Game
     const handleGameReset = () => {     
@@ -185,9 +221,16 @@ export function PlayProvider({ URL, userId, children }){
         setMatchedCards([]) // Reset matched card state with empty array
     }
     
+    // useEffect to track open cards array state
     useEffect(() => {
       if (openCards.length === 2) {
-        checkCardsMatching() // Function check if opened cards' values are matching
+        // Function check if opened cards' values are matching
+        checkCardsMatching(getUesrId[1], () => {
+            const timer = setTimeout(() => { // isEvaluating set to default after 1 sec which enables user to flip cards.
+                setIsEvaluating(false)
+            },1000)
+            return () => clearTimeout(timer)
+        }) 
         setOpenCards([]) // reset open card state to empty array
       }
     }, [openCards]);
@@ -197,9 +240,12 @@ export function PlayProvider({ URL, userId, children }){
         handleGameStart, // game start fucntion
         handleCardFlip, // function to update card status value when card is flipped
         handleGameReset, // reset game funciton
+        CheckComplete,
+        resetOpenCards: () => setOpenCards([]),
         state, // game state
         openCards, // open cards array
-        matchedCards
+        matchedCards,
+        isEvaluating
     }
 
     return(

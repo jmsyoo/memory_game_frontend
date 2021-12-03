@@ -24,6 +24,14 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     width: "100%",
     display:"flex",
+    justifyContent:"flex-start",
+    alignItems: "center",
+    flexDirection: "column"
+  },
+  userRecord__Div:{
+    height: "100%",
+    width: "100%",
+    display:"flex",
     justifyContent:"space-around",
     alignItems: "center",
   },
@@ -38,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     padding: "0 2px 0 2px"
   },
   userRecord:{
-    fontSize: 25,
+    fontSize: 20,
   },
   Typography:{
       fontSize: 17,
@@ -73,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
 const Game = ({ setUserId, userId }) => {
 
     const classes = useStyles();
-    const { handleGameStart, handleCardFlip, handleGameReset, matchedCards ,state, userRecord, openCards } = usePlay()
+    const { handleGameStart, handleCardFlip, handleGameReset, matchedCards ,state, userRecord, openCards, isEvaluating } = usePlay()
     const [cards, setCards] = useState([])
     const [isScoreUpdated, setIsScoreUpdated] = useState(false)
 
@@ -82,22 +90,31 @@ const Game = ({ setUserId, userId }) => {
         setUserId(null)
     }
 
+    // handle card flip
+    const handleFlip = (e, value, score) => {
+        openCards.length < 2 && handleCardFlip(e, value, score) // prevent user open card before previous two cards are back to closed.
+      return
+    }
+
+    // Update current total score
     const calculateTotalScore = (data) => {
       return data.reduce((acc, item, index) => {
         return acc + item.score/2
       },0)
     }
+
+    // Update total cards matched.
     const totalCardMatch = () => {
       return userRecord.cards.length
     }
 
     useEffect(() => {
         if(state.cards.length > 0){
-            setCards(setChunkArray(state.cards, 4))
-        }
+            setCards(setChunkArray(state.cards, 4)) // evenry time cards deck is updated. group them with 4 cards.
+          }
     },[state.cards])
 
-
+    // Tracking matchedCards state
     const getScore = useMemo(() => {
       if(matchedCards.length > 0){
         setIsScoreUpdated(true)
@@ -106,6 +123,7 @@ const Game = ({ setUserId, userId }) => {
       return 0
     },[matchedCards])
 
+    // Life bar color changing funciton
     const lifeBarColor = (value) => {
       if(!value) return
       if(value > 70){
@@ -120,12 +138,14 @@ const Game = ({ setUserId, userId }) => {
       return
     }
 
+    // Life bar component
     const lifeBar = () => {
       return(
         <ProgressBar variant={lifeBarColor(state.life)} className={classes.life} now={state.life} label={`LIFE ${state.life}`} />
       )    
     }
 
+    // set scocre update state set to false after 0.5 sec. to change score score componet background color set to default.
     useEffect(() => {
       if(isScoreUpdated){
         const timer = setTimeout(() => {
@@ -138,6 +158,7 @@ const Game = ({ setUserId, userId }) => {
 
     return (
       <div className="Game">
+        {/* Top Start */}
         <Row className="Game__Top">
           <Col lg={4} md={4} sm={4} xs={4} className="Game__Top__Col">
             <Paper
@@ -146,7 +167,7 @@ const Game = ({ setUserId, userId }) => {
               className={classes.paperName}
             >
               <Typography className={classes.Typography}>
-                {`${userId} is `}
+                {`${userId.split('%%')[0]} is `}
                 <strong className={classes.message}>
                   {userRecord.score ? "returned user" : "new user"}
                 </strong>
@@ -168,7 +189,9 @@ const Game = ({ setUserId, userId }) => {
               {lifeBar()}
           </Col>
         </Row>
+        {/* Top End */}
 
+        {/* Body Start */}
         <Row className="Game__Body">
           <Col className="Game__Body__Col" lg={12} md={12} sm={12} xs={12}>
               <div className="Game__Body__Col__InnerDiv">
@@ -182,13 +205,15 @@ const Game = ({ setUserId, userId }) => {
                   </Button>
                 ) : (
                   <div className="Game__Body_Col__InnerDiv__CardDiv">
-                    <CardBody cards={cards} handleCardFlip={handleCardFlip} openCards={openCards} />
+                    <CardBody cards={cards} handleFlip={handleFlip} openCards={openCards} life={state.life} isEvaluating={isEvaluating} />
                   </div>
                 )}
               </div>
           </Col>
         </Row>
+        {/* Body End */}
 
+        {/* Bottom Start */}
         <Row className="Game__Bottom">
           <Col lg={4} md={4} sm={4} xs={4} className="Game__Bottom__Col">
             <Button
@@ -207,7 +232,10 @@ const Game = ({ setUserId, userId }) => {
               className={classes.userRecordPaper}
               outlined="true"
             >
+              <Typography variant="h5" className={classes.userRecord}>User History</Typography>
+              <div className={classes.userRecord__Div}>
               {
+                userRecord.score?
                 Object.keys(userRecord).map((item, index) => {
                   return (
                     <Typography key={index} variant="h5" className={classes.userRecord}>
@@ -216,19 +244,9 @@ const Game = ({ setUserId, userId }) => {
                         : `${item} : ${userRecord[item] ? userRecord[item] : 0}`}
                     </Typography>
                   );
-                })
+                }): <Typography className={classes.message} variant="h5">No Records</Typography>
               }
-              {/* <ul>
-                {Object.keys(userRecord).map((item, index) => {
-                  return (
-                    <li key={index}>
-                      {item === "cards"
-                        ? `${item} : ${totalCardMatch()}`
-                        : `${item} : ${userRecord[item] ? userRecord[item] : 0}`}
-                    </li>
-                  );
-                })}
-              </ul> */}
+              </div>
             </Paper>
           </Col>
           <Col lg={4} md={4} sm={4} xs={4} className="Game__Bottom__Col">
@@ -242,6 +260,7 @@ const Game = ({ setUserId, userId }) => {
             </Button>
           </Col>
         </Row>
+        {/* Bottom End */}
       </div>
     );
 }

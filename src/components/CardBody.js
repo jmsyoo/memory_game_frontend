@@ -3,57 +3,52 @@ import { Image } from 'react-bootstrap'
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardMedia, Grid, Typography, Paper } from '@material-ui/core';
 
+const CardBody = ({cards, handleFlip, life, isEvaluating}) => {
 const useStyles = makeStyles((theme) => ({
-    Grid:{
-        //backgroundColor: "#f5f5f5",
-        //backgroundColor: "lightyellow",
-        height: "100%",
-        width: "100%",
-        // margin: "6px 6px 0px 6px",
-        // marginBottom: 10
-    },
-    gridItem:{
-      //backgroundColor: "#6c757d",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-      // padding: 30
-    },
-    card:{
-      backgroundColor: "white",
-      height: "85%",
-      width: "85%",
-      borderRadius: 0
-    },
-    back: {
-      height: "100%",
-      width: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    },
-    front:{
-      height: "100%",
-      width: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    },
-    backImage:{
-      // maxHeight: 150
-    },
-    cardValue:{
-      fontSize: 50
-    }
-  }));
-
-const CardBody = ({cards, handleCardFlip, openCards}) => {
-  const classes = useStyles();
-
-  const handleFlip = (e, value, score) => {
-    openCards.length < 2 && handleCardFlip(e, value, score) // prevent user open card before previous two cards are back to closed.
-  }
-
+  Grid: {
+    //backgroundColor: "#f5f5f5",
+    //backgroundColor: "lightyellow",
+    height: "100%",
+    width: "100%",
+    // margin: "6px 6px 0px 6px",
+    // marginBottom: 10
+  },
+  gridItem: {
+    //backgroundColor: "#6c757d",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    // padding: 30
+  },
+  card: {
+    backgroundColor: "white",
+    height: "85%",
+    width: "85%",
+    borderRadius: 0,
+  },
+  back: {
+    height: "100%",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    pointerEvents: life === 0 || isEvaluating ? "none" : "",
+  },
+  front: {
+    height: "100%",
+    width: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  backImage: {
+    // maxHeight: 150
+  },
+  cardValue: {
+    fontSize: 50,
+  },
+}));
+const classes = useStyles();
     return (
       <>
         {cards.map((item, index) => {
