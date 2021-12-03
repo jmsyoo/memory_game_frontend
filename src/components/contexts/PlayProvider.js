@@ -50,7 +50,7 @@ export function PlayProvider({ URL, userId, children }){
     const getUesrId = useMemo(() => { // Check when a user id is changed. To reduce number of rendering.
         return userId
     },[userId])
-    const USER_COLUMN_KEY = ['updated_at','score','cards'] // To filter colums from fetched user data.
+    const USER_COLUMN_KEY = ['score','cards'] // To filter colums from fetched user data.
 
     // to show record for returned users.
     useEffect(() => {
@@ -74,6 +74,7 @@ export function PlayProvider({ URL, userId, children }){
     // 2. Card Deck
     const [state, setState] = useState({
         isGameStarted: false,
+        life: null,
         cards:[]
     })
     // 3. Opened cards array state
@@ -98,10 +99,12 @@ export function PlayProvider({ URL, userId, children }){
     const handleGameStart = () => {
         const cardMethod = new card()
         const newCards = makeCards(cardMethod.shuffle)
-        setState(() => {
+        setState((prv) => {
             return{
+                ...prv,
                 isGameStarted: true,
-                cards: newCards
+                cards: newCards,
+                life: 100
             }
         })
     }
@@ -130,7 +133,6 @@ export function PlayProvider({ URL, userId, children }){
                 }
             })
         })
-
         // Update card isFlipped. Fix this later.
         const tempObj = {}
         tempObj["id"] = cardId
@@ -138,7 +140,6 @@ export function PlayProvider({ URL, userId, children }){
         tempObj["score"] = score
         setOpenCards([...openCards, tempObj]) // store opened card value to OpenCards array state
     }
-
     // Check if opened cards have matching value
     const checkCardsMatching = () => {
 
@@ -157,9 +158,10 @@ export function PlayProvider({ URL, userId, children }){
                 setState((prv) => {
                     return {
                         ...prv,
-                        cards: data
+                        cards: data,
+                        life: state.life -10
                     }
-                })
+                })                
             }, 500) // Save new data after one second.
             return () => setTimeout(timer)
         }
@@ -175,7 +177,8 @@ export function PlayProvider({ URL, userId, children }){
         setState(() => {
             return {
                 isGameStarted: false,
-                cards:[]
+                cards:[],
+                life: 0
             }
         })  
         setOpenCards([]) // Reset open card state with empty array
@@ -187,7 +190,6 @@ export function PlayProvider({ URL, userId, children }){
         checkCardsMatching() // Function check if opened cards' values are matching
         setOpenCards([]) // reset open card state to empty array
       }
-
     }, [openCards]);
 
     const value = {

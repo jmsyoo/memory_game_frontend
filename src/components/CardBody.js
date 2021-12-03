@@ -5,16 +5,25 @@ import { Card, CardMedia, Grid, Typography, Paper } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     Grid:{
-        backgroundColor: "#f5f5f5",
+        //backgroundColor: "#f5f5f5",
+        //backgroundColor: "lightyellow",
         height: "100%",
         width: "100%",
         // margin: "6px 6px 0px 6px",
         // marginBottom: 10
     },
+    gridItem:{
+      //backgroundColor: "#6c757d",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+      // padding: 30
+    },
     card:{
       backgroundColor: "white",
-      height: "100%",
-      borderRadius: 0,
+      height: "85%",
+      width: "85%",
+      borderRadius: 0
     },
     back: {
       height: "100%",
@@ -22,13 +31,6 @@ const useStyles = makeStyles((theme) => ({
       display: "flex",
       justifyContent: "center",
       alignItems: "center"
-      // maxWidth: "100%",
-      // maxHeight: "100%",
-      // display: "block"
-      // height: 0,
-      // width: '100%',
-      // paddingTop: '56.25%', // 16:9
-      // cursor: "pointer"
     },
     front:{
       height: "100%",
@@ -41,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
       // maxHeight: 150
     },
     cardValue:{
-      fontSize: 30
+      fontSize: 50
     }
   }));
 
@@ -49,9 +51,9 @@ const CardBody = ({cards, handleCardFlip, openCards}) => {
   const classes = useStyles();
 
   const handleFlip = (e, value, score) => {
-    // console.log('open Cards: ', openCards)
     openCards.length < 2 && handleCardFlip(e, value, score) // prevent user open card before previous two cards are back to closed.
   }
+
     return (
       <>
         {cards.map((item, index) => {
@@ -59,7 +61,7 @@ const CardBody = ({cards, handleCardFlip, openCards}) => {
             <Grid container spacing={2} key={index} className={classes.Grid}>
               {item.map((ele, i) => {
                 return (
-                  <Grid item key={i} lg={3} md={3} sm={3} xs={3}>
+                  <Grid item key={i} lg={3} md={3} sm={3} xs={3} className={classes.gridItem}>
                     <Paper
                       elevation={2}
                       className={classes.card}
@@ -67,30 +69,18 @@ const CardBody = ({cards, handleCardFlip, openCards}) => {
                       // square
                     >
                       {!ele.isFlipped ? (
-                        // <CardMedia
-                        //   id={ele.id}
-                        //   className={classes.cardBack}
-                        //   image={ele.cardBack}
-                        //   onClick={(e) => handleCardFlip(e)}
-                        // />
-                        // <img id={ele.id} src={ele.cardBack} className={classes.back}
-                        // onClick={(e) => handleCardFlip(e)}/>
-                        <div className={classes.back}>
-                          <Typography
-                            id={ele.id}
-                            className={classes.cardValue}
-                            style={{ cursor: "pointer" }}
-                            onClick={(e) => handleFlip(e, ele.value, ele.score)}
-                            variant="h5"
-                          >
-                            Back
-                          </Typography>
+                        <div 
+                          className={classes.back}
+                          id={ele.id}
+                          style={{ backgroundImage:`url(${ele.cardBack})`, cursor: "pointer",backgroundSize: 'cover',backgroundPosition: 'center' }}
+                          onClick={(e) => handleFlip(e, ele.value, ele.score)}
+                        >
                         </div>
                       ) : (
                         <div className={classes.front}>
                           <Typography
                             className={classes.cardValue}
-                            variant="h5"
+                            variant="h3"
                           >
                             {ele.value}
                           </Typography>

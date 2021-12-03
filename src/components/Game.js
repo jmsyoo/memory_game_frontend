@@ -5,54 +5,72 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, Paper } from '@material-ui/core';
 import CardBody from '../components/CardBody'
 
-const Game = ({ setUserId, userId }) => {
-
-  const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-    },
-    Grid:{
-        // backgroundColor: "lightyellow",
-        height: 200,
-        width: "100%"
-    },
-    paper:{
-      height: "100%",
-      width: "100%",
-      display:"flex",
-      justifyContent:"center",
-      alignItems: "center",
-      // padding: 5
-    },
-    Typography:{
-        fontSize: 20,
-        textAlign: "center"
-    },
-    score:{
-      fontSize: 30,
+const useStyles = makeStyles((theme) => ({
+  root: {
+    flexGrow: 1,
+  },
+  Grid:{
+      height: 200,
+      width: "100%"
+  },
+  paper:{
+    height: "100%",
+    width: "100%",
+    display:"flex",
+    justifyContent:"center",
+    alignItems: "center",
+  },
+  userRecordPaper:{
+    height: "100%",
+    width: "100%",
+    display:"flex",
+    justifyContent:"space-around",
+    alignItems: "center",
+  },
+  paperName:{
+    height: "100%",
+    width: "100%",
+    display:"flex",
+    justifyContent:"center",
+    alignItems: "center",
+    backgroundColor: "#6c757d",
+    color: "#fff",
+    padding: "0 2px 0 2px"
+  },
+  userRecord:{
+    fontSize: 25,
+  },
+  Typography:{
+      fontSize: 17,
       textAlign: "center"
-    },
-    gameButton:{
-        width: "100%",
-        height: "100%",
-        fontSize: 30        
-    },
-    startButton:{
-        width: 150,
-        height: 150,
-        borderRadius: "50%",
-        fontSize: 32
-    },
-    message: {
-      color: "red",
-      fontSize: 18
-    },
-    life:{
+  },
+  score:{
+    fontSize: 30,
+    textAlign: "center"
+  },
+  gameButton:{
       width: "100%",
       height: "100%",
-      fontSize: 30
-    }
+      fontSize: 30        
+  },
+  startButton:{
+      width: 150,
+      height: 150,
+      borderRadius: "50%",
+      fontSize: 32
+  },
+  message: {
+    color: "red",
+    fontSize: 18
+  },
+  life:{
+    width: "100%",
+    height: "100%",
+    fontSize: 30
+  }
 }));
+
+const Game = ({ setUserId, userId }) => {
 
     const classes = useStyles();
     const { handleGameStart, handleCardFlip, handleGameReset, matchedCards ,state, userRecord, openCards } = usePlay()
@@ -88,9 +106,23 @@ const Game = ({ setUserId, userId }) => {
       return 0
     },[matchedCards])
 
+    const lifeBarColor = (value) => {
+      if(!value) return
+      if(value > 70){
+        return 'success'
+      }
+      if(value > 50 && value < 80){
+        return 'warning'
+      }
+      if(value < 60){
+        return 'danger'
+      }
+      return
+    }
+
     const lifeBar = () => {
       return(
-        <ProgressBar variant="success" className={classes.life} now={100} label={`${100}`} />
+        <ProgressBar variant={lifeBarColor(state.life)} className={classes.life} now={state.life} label={`LIFE ${state.life}`} />
       )    
     }
 
@@ -111,13 +143,12 @@ const Game = ({ setUserId, userId }) => {
             <Paper
               elevation={1}
               square
-              className={classes.paper}
-              //variant="outlined"
+              className={classes.paperName}
             >
               <Typography className={classes.Typography}>
                 {`${userId} is `}
                 <strong className={classes.message}>
-                  {userRecord.score ? "returned users" : "new user"}
+                  {userRecord.score ? "returned user" : "new user"}
                 </strong>
               </Typography>
             </Paper>
@@ -128,9 +159,9 @@ const Game = ({ setUserId, userId }) => {
               square
               className={classes.paper}
               outlined="true"
-              style={{backgroundColor: isScoreUpdated ? 'red' : ''}}
+              style={{backgroundColor: isScoreUpdated ? '#1a8754' : ''}}
             >
-              <Typography className={classes.score}>{getScore}</Typography>
+              <Typography className={classes.score}>SCORE: {getScore}</Typography>
             </Paper>
           </Col>
           <Col lg={4} md={4} sm={4} xs={4} className="Game__Top__Col">
@@ -173,13 +204,21 @@ const Game = ({ setUserId, userId }) => {
             <Paper
               elevation={1}
               square
-              className={classes.paper}
+              className={classes.userRecordPaper}
               outlined="true"
             >
-              <ul>
-                {/* {userRecord.score ?
-                <>
-                <li>{userId} <strong className={classes.message}>is returned user.</strong></li> */}
+              {
+                Object.keys(userRecord).map((item, index) => {
+                  return (
+                    <Typography key={index} variant="h5" className={classes.userRecord}>
+                      {item === "cards"
+                        ? `${item} : ${totalCardMatch()}`
+                        : `${item} : ${userRecord[item] ? userRecord[item] : 0}`}
+                    </Typography>
+                  );
+                })
+              }
+              {/* <ul>
                 {Object.keys(userRecord).map((item, index) => {
                   return (
                     <li key={index}>
@@ -189,9 +228,7 @@ const Game = ({ setUserId, userId }) => {
                     </li>
                   );
                 })}
-                {/* </> */}
-                {/* : <li>{userId} <strong className={classes.message}>is new user.</strong></li>} */}
-              </ul>
+              </ul> */}
             </Paper>
           </Col>
           <Col lg={4} md={4} sm={4} xs={4} className="Game__Bottom__Col">
