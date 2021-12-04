@@ -244,19 +244,11 @@ const Game = ({ setUserId, userId }) => {
             >
               <Typography variant="h5" className={classes.userRecord}>User History</Typography>
               <div className={classes.userRecord__Div}>
-                <Typography variant="h5" className={classes.userRecord}>Total Score: {userRecord.score}</Typography>
-              {/* {
-                userRecord.score?
-                Object.keys(userRecord).map((item, index) => {
-                  return (
-                    <Typography key={index} variant="h5" className={classes.userRecord}>
-                      {item === "cards"
-                        ? `${item} : ${totalCardMatch()}`
-                        : `${item} : ${userRecord[item] ? userRecord[item] : 0}`}
-                    </Typography>
-                  );
-                }): <Typography className={classes.message} variant="h5">No Records</Typography>
-              } */}
+                {
+                  userRecord.score !== 0 ?<Typography variant="h5" className={classes.userRecord}>
+                  Total Score: {userRecord.score}
+                  </Typography> :<Typography className={classes.message} variant="h5">No Records</Typography>
+                }
               </div>
             </Paper>
           </Col>

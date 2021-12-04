@@ -2,6 +2,7 @@ import React from 'react'
 import { Image } from 'react-bootstrap'
 import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardMedia, Grid, Typography, Paper } from '@material-ui/core';
+import imgs from '../components/temp/Imgs'
 
 const CardBody = ({cards, handleFlip, life, isEvaluating}) => {
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     height: "85%",
     width: "85%",
-    // borderRadius: 0,
+    borderRadius: 10
   },
   back: {
     height: "100%",
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 20,
+    borderRadius: 10,
     pointerEvents: life === 0 || isEvaluating ? "none" : "",
   },
   front: {
@@ -41,6 +42,8 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: 10,
+    pointerEvents: life === 0 || isEvaluating ? "none" : "",
   },
   backImage: {
     // maxHeight: 150
@@ -61,26 +64,19 @@ const classes = useStyles();
                     <Paper
                       elevation={2}
                       className={classes.card}
-                      // variant="outlined"
-                      // square
                     >
                       {!ele.isFlipped ? (
                         <div 
                           className={classes.back}
                           id={ele.id}
-                          style={{ cursor: "pointer", backgroundPosition: 'center' }}
+                          style={{ backgroundImage:`url(${ele.cardBack})`,  cursor: "pointer", backgroundPosition: 'center', backgroundRepeat:'no-repeat', backgroundSize:"60px" }}
                           onClick={(e) => handleFlip(e, ele.value, ele.score)}
                         >
-                          <img src={ele.cardBack} style={{maxWidth: "80px"}}/>
                         </div>
                       ) : (
-                        <div className={classes.front}>
-                          <Typography
-                            className={classes.cardValue}
-                            variant="h3"
-                          >
-                            {ele.value}
-                          </Typography>
+                        <div className={classes.front}
+                          style={{ backgroundImage:`url(${imgs[ele.value]})`,  cursor: "pointer", backgroundPosition: 'center', backgroundRepeat:'no-repeat', backgroundSize: "cover" }}
+                        >
                         </div>
                       )}
                     </Paper>

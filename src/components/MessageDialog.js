@@ -9,7 +9,8 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    flexGrow: 1
+    flexGrow: 1,
+    // width: 500
   },
   typography:{
     fontSize: 18
@@ -34,7 +35,9 @@ const MessageDialog = ({state, userName, score, resetMatchedCards}) => {
   }
 
   useEffect(() => {
-      state.isGameEnded && setOpen(state.isGameEnded)
+    if(state.isGameEnded){
+      setOpen(state.isGameEnded)
+    }
   },[state.isGameEnded])
   
     return (
@@ -48,10 +51,10 @@ const MessageDialog = ({state, userName, score, resetMatchedCards}) => {
         >
           <DialogContent>
             <DialogContentText>
-              <Typography variant="h5" className={classes.typography}>
+              <Typography className={classes.typography}>
                 Thank you for playing <br/> 
                 <span className={classes.name}>{userName}</span>. 
-                <br/> Your total score is <strong className={classes.score}> {score} </strong>
+                <br/> Your score is <strong className={classes.score}> {score} </strong>
               </Typography> 
             </DialogContentText>
           </DialogContent>
