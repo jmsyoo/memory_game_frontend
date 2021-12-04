@@ -206,7 +206,7 @@ export function PlayProvider({ URL, userId, children }){
                         life: state.life -10
                     }
                 })                
-            }, 500) 
+            }, 700) 
             // Save new data after one second.
 
             cb()// callback for preventing card flipping during the evaluation
@@ -220,11 +220,11 @@ export function PlayProvider({ URL, userId, children }){
             return {
                 isGameStarted: false,
                 cards:[],
-                life: 0
+                life: 0,
+                isGameEnded:false
             }
         })  
         setOpenCards([]) // Reset open card state with empty array
-        //setMatchedCards([]) // Reset matched card state with empty array
     }
     // Update game status
     const updateGameStatus = (status) => {

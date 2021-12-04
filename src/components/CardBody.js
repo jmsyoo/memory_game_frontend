@@ -7,19 +7,13 @@ import imgs from '../components/temp/Imgs'
 const CardBody = ({cards, handleFlip, life, isEvaluating}) => {
 const useStyles = makeStyles((theme) => ({
   Grid: {
-    //backgroundColor: "#f5f5f5",
-    //backgroundColor: "lightyellow",
     height: "100%",
     width: "100%",
-    // margin: "6px 6px 0px 6px",
-    // marginBottom: 10
   },
   gridItem: {
-    //backgroundColor: "#6c757d",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // padding: 30
   },
   card: {
     backgroundColor: "white",
