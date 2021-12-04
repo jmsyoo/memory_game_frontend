@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Container } from 'react-bootstrap';
 import useLocalStorage from '../components/hooks/useLocalStorage';
 import { PlayProvider } from '../components/contexts/PlayProvider';
@@ -12,7 +12,7 @@ const URL = {
 }
 
 function App() {
-  const [ userId, setUserId ] = useLocalStorage('id') // 
+  const [ userId, setUserId ] = useLocalStorage('id') //
 
   const game = (
     <PlayProvider URL={URL} userId={userId}>

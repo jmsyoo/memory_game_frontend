@@ -3,7 +3,8 @@ import { Button, Row, Col, ProgressBar } from 'react-bootstrap'
 import { usePlay } from './contexts/PlayProvider';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, Paper } from '@material-ui/core';
-import CardBody from '../components/CardBody'
+import CardBody from '../components/CardBody';
+import MessageDialog from '../components/MessageDialog';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -81,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
 const Game = ({ setUserId, userId }) => {
 
     const classes = useStyles();
-    const { handleGameStart, handleCardFlip, handleGameReset, matchedCards ,state, userRecord, openCards, isEvaluating } = usePlay()
+    const { handleGameStart, handleCardFlip, handleGameReset, matchedCards ,state, userRecord, openCards, isEvaluating, updateGameStatus, resetMatchedCards } = usePlay()
     const [cards, setCards] = useState([])
     const [isScoreUpdated, setIsScoreUpdated] = useState(false)
 
@@ -114,10 +115,19 @@ const Game = ({ setUserId, userId }) => {
           }
     },[state.cards])
 
+    useEffect(() => {
+      if(state.life === 0){
+        const status = true
+        return updateGameStatus(status)
+      }
+    },[state.life])
+
     // Tracking matchedCards state
     const getScore = useMemo(() => {
       if(matchedCards.length > 0){
         setIsScoreUpdated(true)
+
+        // check matched card lenght with card deck if they are same. update game status to false and open dialog for message.
         return calculateTotalScore(matchedCards)
       }
       return 0
@@ -155,7 +165,7 @@ const Game = ({ setUserId, userId }) => {
       }
     },[isScoreUpdated])
 
-
+  
     return (
       <div className="Game">
         {/* Top Start */}
@@ -169,7 +179,7 @@ const Game = ({ setUserId, userId }) => {
               <Typography className={classes.Typography}>
                 {`${userId.split('%%')[0]} is `}
                 <strong className={classes.message}>
-                  {userRecord.score ? "returned user" : "new user"}
+                  {userId.split('%%')[2] === "1" ? "returned user" : "new user"}
                 </strong>
               </Typography>
             </Paper>
@@ -234,7 +244,8 @@ const Game = ({ setUserId, userId }) => {
             >
               <Typography variant="h5" className={classes.userRecord}>User History</Typography>
               <div className={classes.userRecord__Div}>
-              {
+                <Typography variant="h5" className={classes.userRecord}>Total Score: {userRecord.score}</Typography>
+              {/* {
                 userRecord.score?
                 Object.keys(userRecord).map((item, index) => {
                   return (
@@ -245,7 +256,7 @@ const Game = ({ setUserId, userId }) => {
                     </Typography>
                   );
                 }): <Typography className={classes.message} variant="h5">No Records</Typography>
-              }
+              } */}
               </div>
             </Paper>
           </Col>
@@ -261,6 +272,8 @@ const Game = ({ setUserId, userId }) => {
           </Col>
         </Row>
         {/* Bottom End */}
+
+        <MessageDialog state={state} userName={userId.split('%%')[0]} score={getScore} resetMatchedCards={resetMatchedCards}/>
       </div>
     );
 }

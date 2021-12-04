@@ -4,13 +4,11 @@ import { Form, Button } from 'react-bootstrap'
 import UserInput from './hooks/useInput'
 import { v4 as uuidV4 } from 'uuid'
 
-
-
 const Login = ({ URL, setUserId }) => {
 
     const { value: userNameValue, bind: userIdBind, reset: userIdReset } = UserInput('') // Custom userInput hook.
 
-    // Save if it's new user otherwise find user id for saving play records.
+    // Save if it's new user. otherwise find user id for saving play records.
     /*
      * Using stored procedure would be much easier and cleaner than using get and post route with callback.
      * Checking results in procedure, if result is not null than return list otherwise insert param value into user table.
@@ -21,7 +19,7 @@ const Login = ({ URL, setUserId }) => {
                 name: name,
               }).then((result) => {
                 console.log("save users data: ", result.data);
-                setUserId(name + "%%" + result.data.id); // Save name and user id to localstorage.
+                setUserId(name + "%%" + result.data.id + '%%' + '0'); // Save name and user id to localstorage.
               });
         }catch(error){
             console.error(error)
@@ -32,7 +30,7 @@ const Login = ({ URL, setUserId }) => {
             const response = await axios.get(`${URL.production}users/${name}`).then((result) => {         
                 console.log('fetched users data: ',result.data)
                 if(result.data){
-                    setUserId(name + '%%' + result.data.id) // Save name and user id to localstorage.
+                    setUserId(name + '%%' + result.data.id + '%%' + '1') // Save name and user id to localstorage.
                 }
                 else{
                     cb(name) // If user name is not found then save to db.

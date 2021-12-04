@@ -58,7 +58,8 @@ export function PlayProvider({ URL, userId, children }){
     const [state, setState] = useState({
         isGameStarted: false,
         life: null,
-        cards:[]
+        cards:[],
+        isGameEnded: false
     })
     // 3. Opened cards array state
     const [openCards, setOpenCards] = useState([])
@@ -68,7 +69,7 @@ export function PlayProvider({ URL, userId, children }){
     const [isEvaluating, setIsEvaluating] = useState(false)
 
 
-    /// Requesting API ///
+    /// Requesting call API ///
     // to show record for returned users.
     useEffect(() => {
         (async() => {
@@ -79,7 +80,17 @@ export function PlayProvider({ URL, userId, children }){
                 const tempObj = {}
                 for(let key in result.data){
                     if(USER_COLUMN_KEY.includes(key)){ // Check if column keys avilable
-                        tempObj[key] = result.data[key] // add to obj if it does
+                        if(key == "cards"){
+                            tempObj[key] = result.data[key].length
+                        }else if(key == "score"){
+                            tempObj[key] = result.data.cards.reduce((acc, item, index) => {
+                                return acc + item.score
+                            },0)
+                        }
+                        else{
+                            tempObj[key] = result.data[key] // add to obj if it does
+                        }
+                        
                     }
                 }
                 setUserRecords(tempObj) // assign filtered user data obj to user records state
@@ -105,9 +116,7 @@ export function PlayProvider({ URL, userId, children }){
             console.error(error)
         }
     }
-    /// Requesting API ///
-
-    
+    /// Requesting call API ///
 
     // Make card function
     const makeCards = (cb) => {
@@ -203,10 +212,6 @@ export function PlayProvider({ URL, userId, children }){
             return () => setTimeout(timer)
         }
     }
-    // Check if user have every matched cards in matched array.
-    const CheckComplete = () => {
-        return matchedCards.length === 2 && alert('You won.')
-    }
     //  Reset Game
     const handleGameReset = () => {     
         // Reset state
@@ -218,7 +223,16 @@ export function PlayProvider({ URL, userId, children }){
             }
         })  
         setOpenCards([]) // Reset open card state with empty array
-        setMatchedCards([]) // Reset matched card state with empty array
+        //setMatchedCards([]) // Reset matched card state with empty array
+    }
+    // Update game status
+    const updateGameStatus = (status) => {
+        return setState((prv) => {
+            return{
+                ...prv,
+                isGameEnded: status
+            }
+        })
     }
     
     // useEffect to track open cards array state
@@ -240,8 +254,9 @@ export function PlayProvider({ URL, userId, children }){
         handleGameStart, // game start fucntion
         handleCardFlip, // function to update card status value when card is flipped
         handleGameReset, // reset game funciton
-        CheckComplete,
         resetOpenCards: () => setOpenCards([]),
+        resetMatchedCards: () => setMatchedCards([]),
+        updateGameStatus,
         state, // game state
         openCards, // open cards array
         matchedCards,

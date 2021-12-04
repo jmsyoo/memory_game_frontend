@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "white",
     height: "85%",
     width: "85%",
-    borderRadius: 0,
+    // borderRadius: 0,
   },
   back: {
     height: "100%",
@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: 20,
     pointerEvents: life === 0 || isEvaluating ? "none" : "",
   },
   front: {
@@ -67,9 +68,10 @@ const classes = useStyles();
                         <div 
                           className={classes.back}
                           id={ele.id}
-                          style={{ backgroundImage:`url(${ele.cardBack})`, cursor: "pointer",backgroundSize: 'cover',backgroundPosition: 'center' }}
+                          style={{ cursor: "pointer", backgroundPosition: 'center' }}
                           onClick={(e) => handleFlip(e, ele.value, ele.score)}
                         >
+                          <img src={ele.cardBack} style={{maxWidth: "80px"}}/>
                         </div>
                       ) : (
                         <div className={classes.front}>

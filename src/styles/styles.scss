@@ -4,10 +4,6 @@
     --lightgrey: #f5f5f5;
     --white: #ffffff;
     --black: #000;
-    // --adminBackground: #f9f9f9;
-    // --blue: rgb(112, 206, 228);
-    // --yellow: #fbdf57;
-    // --container_test_color: rgb(219, 219, 172);
   }
   
   *,
@@ -57,7 +53,6 @@
     height: 100%;
     // padding: 1rem;
     .Game__Top{
-      //background-color: lightblue;
       height: 10%;
       margin: auto;
       .Game__Top__Col{
@@ -70,14 +65,13 @@
       }
     }
     .Game__Body{
-      //background-color: lightgrey;
       height:80%;
       margin: auto;
       .Game__Body__Col{
         height: 100%;
         width: 100%;
         padding: 1rem;
-        //background-color: lightpink;
+
         .Game__Body__Col__InnerDiv{
           background-color: var(--lightgrey);
           width: 100%;
@@ -97,7 +91,6 @@
       }
     }
     .Game__Bottom{
-      //background-color: lightgreen;
       height: 10%;
       margin: auto;
       .Game__Bottom__Col{
