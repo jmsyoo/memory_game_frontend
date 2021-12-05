@@ -27,17 +27,37 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const MessageDialog = ({state, userName, score, resetMatchedCards}) => {
+const MessageDialog = ({state, userName, score, resetMatchedCards ,updateGameStatus, handleGameReset}) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleClose = (cb) => {
+    updateGameStatus(false)
     resetMatchedCards()
+    setOpen(false)
+    // when user corret all cards matched.
+    // if(matchedCards.length === state.cards.length){
+      
+    //   resetMatchedCards()
+    //   handleGameReset()
+    //   const timer = setTimeout(() => {
+    //     setOpen(false)
+    //   },1000)
+    //   return () => clearTimeout(timer)
+    // }else{
+    //   setOpen(false);
+    //   resetMatchedCards()
+    // }
+    // if(state.isMatchedAllCards){
+    //   return cb()
+    // }
+    
+    
   }
 
   useEffect(() => {
     if(state.isGameEnded){
+
       console.log('game ended')
       setOpen(state.isGameEnded)
     }
@@ -60,7 +80,7 @@ const MessageDialog = ({state, userName, score, resetMatchedCards}) => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-              <Button onClick={handleClose} size="lg">Close</Button>
+              <Button onClick={() => handleClose(handleGameReset)} size="lg">Close</Button>
           </DialogActions>
         </Dialog>
       </div>

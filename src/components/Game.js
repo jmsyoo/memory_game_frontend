@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
 const Game = ({ setUserId, userId }) => {
 
     const classes = useStyles();
-    const { handleGameStart, handleCardFlip, handleGameReset, matchedCards ,state, userRecord, openCards, isEvaluating, updateGameStatus, resetMatchedCards } = usePlay()
+    const { handleGameStart, handleCardFlip, handleGameReset, matchedCards ,state, userRecord, openCards, isEvaluating, updateGameStatus, resetMatchedCards, updateMatchedAllCards } = usePlay()
     const [cards, setCards] = useState([])
     const [isScoreUpdated, setIsScoreUpdated] = useState(false)
 
@@ -104,11 +104,6 @@ const Game = ({ setUserId, userId }) => {
       },0)
     }
 
-    // Update total cards matched.
-    const totalCardMatch = () => {
-      return userRecord.cards.length
-    }
-
     useEffect(() => {
         if(state.cards.length > 0){
             setCards(setChunkArray(state.cards, 4)) // evenry time cards deck is updated. group them with 4 cards.
@@ -126,7 +121,12 @@ const Game = ({ setUserId, userId }) => {
     const getScore = useMemo(() => {
       if(matchedCards.length > 0){
         setIsScoreUpdated(true)
-        matchedCards.length === state.cards.length && updateGameStatus(true) // if matched cards count is equal to cards then set game status to true.
+
+        if(matchedCards.length === state.cards.length){
+          updateGameStatus(true)
+          handleGameReset()
+        }
+        //matchedCards.length === state.cards.length && updateGameStatus(true) // if matched cards count is equal to cards then set game status to true.
         // check matched card lenght with card deck if they are same. update game status to false and open dialog for message.
         return calculateTotalScore(matchedCards)
       }
@@ -265,7 +265,7 @@ const Game = ({ setUserId, userId }) => {
         </Row>
         {/* Bottom End */}
 
-        <MessageDialog state={state} userName={userId.split('%%')[0]} score={getScore} resetMatchedCards={resetMatchedCards}/>
+        <MessageDialog state={state} userName={userId.split('%%')[0]} score={getScore} resetMatchedCards={resetMatchedCards} handleGameReset={handleGameReset} updateGameStatus={updateGameStatus} />
       </div>
     );
 }

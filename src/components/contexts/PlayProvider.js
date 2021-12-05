@@ -19,21 +19,8 @@ class card {
         this.score = 100
     }
     shuffle(array) {
-        let currentIndex = array.length, temporaryValue, randomIndex;
-      
-        // While there remain elements to shuffle...
-        while (0 !== currentIndex) {
-      
-          // Pick a remaining element...
-          randomIndex = Math.floor(Math.random() * currentIndex);
-          currentIndex -= 1;
-      
-          // And swap it with the current element.
-          temporaryValue = array[currentIndex];
-          array[currentIndex] = array[randomIndex];
-          array[randomIndex] = temporaryValue;
-        }
-        return array;
+        const data = array.sort(() => 0.5 - Math.random())
+        return data
     }
     setChunkArray(data, num) {
         let index = 0
@@ -51,7 +38,7 @@ export function PlayProvider({ URL, userId, children }){
     const getUesrId = useMemo(() => { // Check when a user id is changed. To reduce number of rendering.
         return userId.split('%%')
     },[userId])
-    const USER_COLUMN_KEY = ['id','score','cards'] // To filter colums from fetched user data.
+    const USER_COLUMN_KEY = ['id','score','cards'] // To filter columns from fetched user data.
 
     // 1. User Records
     const [userRecord, setUserRecords] = useState({})
@@ -60,7 +47,8 @@ export function PlayProvider({ URL, userId, children }){
         isGameStarted: false,
         life: null,
         cards:[],
-        isGameEnded: false
+        isGameEnded: false,
+        isMatchedAllCards: false
     })
     // 3. Opened cards array state
     const [openCards, setOpenCards] = useState([])
@@ -98,6 +86,7 @@ export function PlayProvider({ URL, userId, children }){
             })
         })() // IFFE function to fetch user's record from server when user id is updated.
     },[getUesrId])
+
     const saveMatchingCardToDb = async (value) => {
         try{
             const response = await axios.post(`${URL.production}cards`,{
@@ -117,7 +106,7 @@ export function PlayProvider({ URL, userId, children }){
             console.error(error)
         }
     }
-    /// Requesting call API ///
+    /// Requesting call API///
 
     // Make card function
     const makeCards = (cb) => {
@@ -260,7 +249,7 @@ export function PlayProvider({ URL, userId, children }){
         updateGameStatus,
         state, // game state
         openCards, // open cards array
-        matchedCards,
+        matchedCards, // matched cards array
         isEvaluating
     }
 
