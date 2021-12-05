@@ -126,7 +126,7 @@ const Game = ({ setUserId, userId }) => {
     const getScore = useMemo(() => {
       if(matchedCards.length > 0){
         setIsScoreUpdated(true)
-
+        matchedCards.length === state.cards.length && updateGameStatus(true) // if matched cards count is equal to cards then set game status to true.
         // check matched card lenght with card deck if they are same. update game status to false and open dialog for message.
         return calculateTotalScore(matchedCards)
       }
@@ -232,7 +232,7 @@ const Game = ({ setUserId, userId }) => {
               onClick={handleGameReset}
               className={classes.gameButton}
             >
-              RESET
+              RESTART
             </Button>
           </Col>
           <Col lg={4} md={4} sm={4} xs={4} className="Game__Bottom__Col">
