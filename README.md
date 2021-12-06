@@ -1,4 +1,4 @@
-# Custom Ink Scenario [Memory Game] 
+# Memory Game
 
 ## Approach
 Users can begin the memory game with log-in, which can be created automatically. 
