@@ -32,27 +32,9 @@ const MessageDialog = ({state, userName, score, resetMatchedCards ,updateGameSta
   const [open, setOpen] = useState(false);
 
   const handleClose = (cb) => {
-    updateGameStatus(false)
-    resetMatchedCards()
-    setOpen(false)
-    // when user corret all cards matched.
-    // if(matchedCards.length === state.cards.length){
-      
-    //   resetMatchedCards()
-    //   handleGameReset()
-    //   const timer = setTimeout(() => {
-    //     setOpen(false)
-    //   },1000)
-    //   return () => clearTimeout(timer)
-    // }else{
-    //   setOpen(false);
-    //   resetMatchedCards()
-    // }
-    // if(state.isMatchedAllCards){
-    //   return cb()
-    // }
-    
-    
+    updateGameStatus(false) // update isgame ended status set back to false
+    resetMatchedCards() // clear matched array state empty
+    setOpen(false) // close the dialog.
   }
 
   useEffect(() => {

@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    pointerEvents: life === 0 || isEvaluating ? "none" : "",
+    // pointerEvents: life === 0 || isEvaluating ? "none" : "",
   },
   backImage: {
     // maxHeight: 150

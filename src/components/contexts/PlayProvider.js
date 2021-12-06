@@ -11,26 +11,26 @@ export function usePlay(){
 
 // Card Class
 class card {
-    constructor(id, value){
-        this.id = id
-        this.value = value + 1
-        this.isFlipped = false
-        this.cardBack = CARDIMAGE
-        this.score = 100
+  constructor(id, value) {
+    this.id = id;
+    this.value = value + 1;
+    this.isFlipped = false;
+    this.cardBack = CARDIMAGE;
+    this.score = 100;
+  }
+  shuffle(array) {
+    const data = array.sort(() => 0.5 - Math.random())
+    return data
+  }
+  setChunkArray(data, num) {
+    let index = 0;
+    let array = [];
+    while (index < data.length) {
+      array.push(data.slice(index, index + num));
+      index += num;
     }
-    shuffle(array) {
-        const data = array.sort(() => 0.5 - Math.random())
-        return data
-    }
-    setChunkArray(data, num) {
-        let index = 0
-        let array = []
-        while(index < data.length){
-            array.push(data.slice(index, index + num))
-            index += num
-        }
-        return array
-    }
+    return array;
+  }
 }
 
 export function PlayProvider({ URL, userId, children }){
@@ -157,7 +157,7 @@ export function PlayProvider({ URL, userId, children }){
                 }
             })
         })
-        // Update card isFlipped. Fix this later.
+        // Update card isFlipped.
         const tempObj = {}
         tempObj["id"] = cardId
         tempObj["value"] = value

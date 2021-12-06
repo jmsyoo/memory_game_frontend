@@ -93,8 +93,7 @@ const Game = ({ setUserId, userId }) => {
 
     // handle card flip
     const handleFlip = (e, value, score) => {
-        openCards.length < 2 && handleCardFlip(e, value, score) // prevent user open card before previous two cards are back to closed.
-      return
+        handleCardFlip(e, value, score)
     }
 
     // Update current total score
@@ -104,12 +103,14 @@ const Game = ({ setUserId, userId }) => {
       },0)
     }
 
+    // state card useEffect
     useEffect(() => {
         if(state.cards.length > 0){
             setCards(setChunkArray(state.cards, 4)) // evenry time cards deck is updated. group them with 4 cards.
           }
     },[state.cards])
 
+    // state life useEffect
     useEffect(() => {
       if(state.life === 0){
         const status = true
@@ -123,8 +124,8 @@ const Game = ({ setUserId, userId }) => {
         setIsScoreUpdated(true)
 
         if(matchedCards.length === state.cards.length){
-          updateGameStatus(true)
-          handleGameReset()
+          updateGameStatus(true) // Game end set to true
+          handleGameReset() // reset game
         }
         //matchedCards.length === state.cards.length && updateGameStatus(true) // if matched cards count is equal to cards then set game status to true.
         // check matched card lenght with card deck if they are same. update game status to false and open dialog for message.
